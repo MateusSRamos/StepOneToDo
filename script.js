@@ -6,13 +6,19 @@ buttonNewTask.addEventListener("click", addTask);
 
 function addTask() {
   event.preventDefault();
-  console.log(newTaskInput.value);
 
-  const taskItem = document.createElement("div");
+  const taskItem = document.createElement("label");
   taskItem.classList.add("task-item");
 
-  const inputItem = document.createElement("input");
-  inputItem.type = "checkbox";
+  const checkboxInput = document.createElement("input");
+  checkboxInput.type = "checkbox";
+
+  const fakeCheckboxInput = document.createElement("span");
+  fakeCheckboxInput.classList.add("fake-checkbox");
+
+  const checkIcon = document.createElement("i");
+  checkIcon.classList.add("fa");
+  checkIcon.classList.add("fa-check");
 
   const taskItemText = document.createElement("p");
   taskItemText.innerText = newTaskInput.value;
@@ -23,11 +29,24 @@ function addTask() {
   trashItem.classList.add("fa");
   trashItem.classList.add("fa-trash");
 
-  taskItem.appendChild(inputItem);
+  taskItem.appendChild(checkboxInput);
+  taskItem.appendChild(fakeCheckboxInput);
+  fakeCheckboxInput.appendChild(checkIcon);
   taskItem.append(taskItemText);
   taskItem.appendChild(buttonTrash);
   buttonTrash.appendChild(trashItem);
   taskBox.appendChild(taskItem);
 
+  trashItem.addEventListener("click", deleteTask);
+  checkboxInput.addEventListener("click", completeTask);
+
   newTaskInput.value = "";
+}
+
+function deleteTask(e) {
+  e.target.parentElement.parentElement.remove();
+}
+
+function completeTask(e) {
+  e.target.parentElement.classList.toggle("complete");
 }
