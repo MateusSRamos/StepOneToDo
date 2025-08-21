@@ -1,52 +1,74 @@
-const buttonNewTask = document.querySelector(".new-task button");
-const taskBox = document.querySelector(".task-box");
-const newTaskInput = document.querySelector(".new-task input");
+const buttonNewTask = document.querySelector(".new-task button"); //adicionar uma nova tarefa.
+const taskBox = document.querySelector(".task-box"); //recebe todos os itens de tarefa que forem criados.
+const newTaskInput = document.querySelector(".new-task input"); //digitar o nome da tarefa
 
-buttonNewTask.addEventListener("click", addTask);
+buttonNewTask.addEventListener("click", addTask); //clica para criar uma nova tarefa.
 
-function addTask() {
-  event.preventDefault();
+function addTask(event) {
+  event.preventDefault(); //Mantem o dado no input em caso de falha
 
-  const taskItem = document.createElement("label");
-  taskItem.classList.add("task-item");
+  const list = JSON.parse(localStorage.getItem("list")) || [];
+  const itemIndex = list.length 
+  console.log(list);
+  console.log(itemIndex)
 
-  const checkboxInput = document.createElement("input");
-  checkboxInput.type = "checkbox";
+  const taskItem = document.createElement("label"); //Cria um novo elemento HTML chamado <label>
+  taskItem.classList.add("task-item"); //define a classe como task-item
 
-  const fakeCheckboxInput = document.createElement("span");
-  fakeCheckboxInput.classList.add("fake-checkbox");
+  const checkboxInput = document.createElement("input"); //Crie um novo elemento de entrada chamado <input>
+  checkboxInput.type = "checkbox"; //configurando esse <input> para ser um checkbox.
 
-  const checkIcon = document.createElement("i");
-  checkIcon.classList.add("fa");
-  checkIcon.classList.add("fa-check");
+  const fakeCheckboxInput = document.createElement("span"); //cria um novo elemento <span>
+  fakeCheckboxInput.classList.add("fake-checkbox"); //cria uma classe chamada fake-checkbox nesse <span>.
 
-  const taskItemText = document.createElement("p");
-  taskItemText.innerText = newTaskInput.value;
+  const checkIcon = document.createElement("i"); //Cria um elemento HTML
+  checkIcon.classList.add("fa"); //Diz que ele usa a biblioteca Font Awesome
+  checkIcon.classList.add("fa-check"); //especifica qual ícone vai aparecer
 
-  const buttonTrash = document.createElement("button");
+  const taskItemText = document.createElement("p"); //Crie um novo elemento <p>.
+  taskItemText.innerText = newTaskInput.value; //Pega o que a pessoa digitou no campo de texto (newTaskInput.value) e escreva dentro desse parágrafo.
 
-  const trashItem = document.createElement("i");
-  trashItem.classList.add("fa");
-  trashItem.classList.add("fa-trash");
+  const buttonTrash = document.createElement("button"); //Cria um novo botão
 
-  taskItem.appendChild(checkboxInput);
-  taskItem.appendChild(fakeCheckboxInput);
-  fakeCheckboxInput.appendChild(checkIcon);
-  taskItem.append(taskItemText);
-  taskItem.appendChild(buttonTrash);
-  buttonTrash.appendChild(trashItem);
-  taskBox.appendChild(taskItem);
+  const trashItem = document.createElement("i"); //cria um elemento <i>
+  trashItem.classList.add("fa"); //Diz que ele usa a biblioteca Font Awesome
+  trashItem.classList.add("fa-trash"); //especifica qual ícone vai aparecer
+  trashItem.addEventListener("click", () => deleteTask(itemIndex))
 
-  trashItem.addEventListener("click", deleteTask);
-  checkboxInput.addEventListener("click", completeTask);
+  taskItem.appendChild(checkboxInput); // coloca o checkboc dentro do taskItem
+  taskItem.appendChild(fakeCheckboxInput); //Adiciona o fakeCheckboxInput, <span> checkbox estilizado.
+  fakeCheckboxInput.appendChild(checkIcon); //Coloca o ícone de check dentro do checkbox falso
+  taskItem.append(taskItemText); //adiciona o parágrafo com o texto do usuário dentro do item da tarefa.
+  taskItem.appendChild(buttonTrash); //Adiciona o botão de apagar
+  buttonTrash.appendChild(trashItem); //coloca o ícone da lixeira dentro do botão
+  taskBox.appendChild(taskItem); //adiciona todo o item da tarefa na caixa principal (taskBox)
 
-  newTaskInput.value = "";
+  // trashItem.addEventListener("click", deleteTask); //clicar no ícone da lixeira, executa a função deleteTask
+  checkboxInput.addEventListener("click", completeTask); // clicar no checkbox, execute a função completeTask
+
+  newTaskInput.value = ""; // reseta o campo de texto
 }
 
-function deleteTask(e) {
-  e.target.parentElement.parentElement.remove();
+function deleteTask(itemIndex) {
+  console.log(itemIndex)
 }
 
 function completeTask(e) {
   e.target.parentElement.classList.toggle("complete");
 }
+
+
+
+// Salvar e Apresentar dados salvos em localStorage
+
+function saveItem() {
+  const tasks = [];
+
+  localStorage.setItem(
+    "itemNumber",
+    taskItem.value,
+    taskItemText.value,
+    taskBox.value
+  );
+}
+function showItens() {}
