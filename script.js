@@ -4,113 +4,83 @@ const newTaskInput = document.querySelector(".new-task input"); //digitar o nome
 
 buttonNewTask.addEventListener("click", addTask); //clica para criar uma nova tarefa.
 
-window.addEventListener("load", (event) => {
-  showItens();
-});
-
 function addTask(event) {
   event.preventDefault(); //Mantem o dado no input em caso de falha
 
-  const list = JSON.parse(localStorage.getItem("list")) || []; //pega os dados salvos com a chave/transforma o texto salvo em um array/objeto JavaScript./se não existir nada salvo ainda, ele cria uma lista vazia [] para não dar erro.
-  const itemIndex = list.length; //retorna o tamanho atual da lista.
-
-  const taskItem = document.createElement("label"); //Cria um novo elemento HTML chamado <label>
-  taskItem.classList.add("task-item"); //define a classe como task-item
-  taskItem.id = `task-item-${itemIndex}`; //define o id do elemento como task-1, task-2, etc.
-
-  const checkboxInput = document.createElement("input"); //Crie um novo elemento de entrada chamado <input>
-  checkboxInput.type = "checkbox"; //configurando esse <input> para ser um checkbox.
-
-  const fakeCheckboxInput = document.createElement("span"); //cria um novo elemento <span>
-  fakeCheckboxInput.classList.add("fake-checkbox"); //cria uma classe chamada fake-checkbox nesse <span>.
-
-  const checkIcon = document.createElement("i"); //Cria um elemento HTML
-  checkIcon.classList.add("fa"); //Diz que ele usa a biblioteca Font Awesome
-  checkIcon.classList.add("fa-check"); //especifica qual ícone vai aparecer
-
-  const taskItemText = document.createElement("p"); //Crie um novo elemento <p>.
-  taskItemText.innerText = newTaskInput.value; //Pega o que a pessoa digitou no campo de texto (newTaskInput.value) e escreva dentro desse parágrafo.
-
-  const buttonTrash = document.createElement("button"); //Cria um novo botão
-
-  const trashItem = document.createElement("i"); //cria um elemento <i>
-  trashItem.classList.add("fa"); //Diz que ele usa a biblioteca Font Awesome
-  trashItem.classList.add("fa-trash"); //especifica qual ícone vai aparecer
-  trashItem.addEventListener("click", () => deleteTask(itemIndex)); //clicar no ícone da lixeira, executa a função deleteTask
-
-  taskItem.appendChild(checkboxInput); // coloca o checkboc dentro do taskItem
-  taskItem.appendChild(fakeCheckboxInput); //Adiciona o fakeCheckboxInput, <span> checkbox estilizado.
-  fakeCheckboxInput.appendChild(checkIcon); //Coloca o ícone de check dentro do checkbox falso
-  taskItem.append(taskItemText); //adiciona o parágrafo com o texto do usuário dentro do item da tarefa.
-  taskItem.appendChild(buttonTrash); //Adiciona o botão de apagar
-  buttonTrash.appendChild(trashItem); //coloca o ícone da lixeira dentro do botão
-  taskBox.appendChild(taskItem); //adiciona todo o item da tarefa na caixa principal (taskBox)
+  const list = JSON.parse(localStorage.getItem("list")) || [];
+  const itemIndex = list.length;
 
   const item = {
     itemIndex, //pega o número do item da lista
-    description: taskItemText.innerText, //pega o texto do parágrafo que foi digitado pelo usuário
+    description: newTaskInput.value, //pega o texto do parágrafo que foi digitado pelo usuário
     status: false, //inicialmente a tarefa não está completa
   };
 
-  createItem(list, item);
-
-  checkboxInput.addEventListener("click", (e) => updateTask(e, itemIndex)); // clicar no checkbox, execute a função updateTask
-
-  newTaskInput.value = ""; // reseta o campo de texto
-}
-
-function deleteTask(itemIndex,e) {
-
-  e.target.parentElement.parentElement.remove
-  console.log(itemIndex); // TODO - Implementar a lógica de exclusão de tarefa
-}
-
-function updateTask(e, itemIndex) {
-  console.log(e.target.checked, itemIndex); // TODO - Implementar a lógica de atualização de tarefa
-}
-
-function createItem(list, item) {
-  list.push(item); //adiciona o item à lista
+  list.push(item);
   localStorage.setItem("list", JSON.stringify(list));
+
+  newTaskInput.value = "";
+  showItens();
 }
 
 function showItens() {
-  const list = JSON.parse(localStorage.getItem("list")) || [];
-  for (i = 0; i < list.length; i++) {
-    const taskItem = document.createElement("label"); //Cria um novo elemento HTML chamado <label>
-    taskItem.classList.add("task-item"); //define a classe como task-item
+  const list = JSON.parse(localStorage.getItem("list")) || []; //pega os dados salvos com a chave/transforma o texto salvo em um array/objeto JavaScript./se não existir nada salvo ainda, ele cria uma lista vazia [] para não dar erro.
+  taskBox.innerHTML = "";
+
+  list.forEach((item, itemIndex) => {
+    const taskItem = document.createElement("label");
+    taskItem.classList.add("task-item");
+    taskItem.id = `task-item-${itemIndex}`;
 
     const checkboxInput = document.createElement("input"); //Crie um novo elemento de entrada chamado <input>
     checkboxInput.type = "checkbox"; //configurando esse <input> para ser um checkbox.
+    checkboxInput.checked = item.status; // marca o checkbox se já estava concluído
 
-    const fakeCheckboxInput = document.createElement("span"); //cria um novo elemento <span>
-    fakeCheckboxInput.classList.add("fake-checkbox"); //cria uma classe chamada fake-checkbox nesse <span>.
+    const fakeCheckboxInput = document.createElement("span");
+    fakeCheckboxInput.classList.add("fake-checkbox"); //cria um novo elemento <span>cria uma classe chamada fake-checkbox nesse <span>.
 
-    const checkIcon = document.createElement("i"); //Cria um elemento HTML
-    checkIcon.classList.add("fa"); //Diz que ele usa a biblioteca Font Awesome
-    checkIcon.classList.add("fa-check"); //especifica qual ícone vai aparecer
+    const checkIcon = document.createElement("i");
+    checkIcon.classList.add("fa", "fa-check"); //Cria um elemento HTML-diz que ele usa a biblioteca Font Awesome-especifica qual ícone vai aparecer
+    checkboxInput.addEventListener("change", () => updateTask(item.itemIndex));
 
     const taskItemText = document.createElement("p"); //Crie um novo elemento <p>.
-    taskItemText.innerText = list[i].description; //Pega o que a pessoa digitou no campo de texto (newTaskInput.value) e escreva dentro desse parágrafo.
+    taskItemText.innerText = item.description; //Pega o que a pessoa digitou no campo de texto (newTaskInput.value) e escreva dentro desse parágrafo.
 
     const buttonTrash = document.createElement("button"); //Cria um novo botão
 
     const trashItem = document.createElement("i"); //cria um elemento <i>
-    trashItem.classList.add("fa"); //Diz que ele usa a biblioteca Font Awesome
-    trashItem.classList.add("fa-trash"); //especifica qual ícone vai aparecer
-    const itemIndex = list[i].itemIndex
-    trashItem.addEventListener("click", () => deleteTask(itemIndex)); //clicar no ícone da lixeira, executa a função deleteTask
-    
+    trashItem.classList.add("fa", "fa-trash"); //Diz que ele usa a biblioteca Font Awesome//especifica qual ícone vai aparecer
+    trashItem.addEventListener("click", () => deleteTask(item.itemIndex)); //clicar no ícone da lixeira, executa a função deleteTask
 
-    taskItem.appendChild(checkboxInput); // coloca o checkbox dentro do taskItem
+    taskItem.appendChild(checkboxInput); // coloca o checkboc dentro do taskItem
     taskItem.appendChild(fakeCheckboxInput); //Adiciona o fakeCheckboxInput, <span> checkbox estilizado.
     fakeCheckboxInput.appendChild(checkIcon); //Coloca o ícone de check dentro do checkbox falso
     taskItem.append(taskItemText); //adiciona o parágrafo com o texto do usuário dentro do item da tarefa.
     taskItem.appendChild(buttonTrash); //Adiciona o botão de apagar
     buttonTrash.appendChild(trashItem); //coloca o ícone da lixeira dentro do botão
     taskBox.appendChild(taskItem); //adiciona todo o item da tarefa na caixa principal (taskBox)
-  }
+  });
 }
 
-//  localStorage.removeItem("list"); - remove a lista completa"
-//getItem() - pega uma chave e retorna o valor correspondente
+function deleteTask(index) {
+  let list = JSON.parse(localStorage.getItem("list")) || [];
+  list = list.filter((item) => item.itemIndex !== index);
+  localStorage.setItem("list", JSON.stringify(list));
+  showItens();
+}
+
+function updateTask(index) {
+  let list = JSON.parse(localStorage.getItem("list")) || [];
+
+  // Encontra o item com o índice que vai alterar o status
+  const item = list.find((item) => item.itemIndex === index);
+  if (item) {
+    item.status = !item.status; // inverte o status
+  }
+
+  localStorage.setItem("list", JSON.stringify(list)); // Atualiza o localStorage com as alterações
+  showItens();
+}
+
+// recarrega a pagina
+window.onload = showItens;
